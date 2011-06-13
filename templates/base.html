@@ -1,0 +1,236 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Place favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+  <!-- CSS: implied media="all" -->
+  <!-- css concatenated and minified -->
+  <link rel="stylesheet" href="/media/css/style.css">
+  <!-- end css -->
+  <link href="http://fonts.googleapis.com/css?family=Neucha:regular" rel="stylesheet" type="text/css" >
+
+  <!-- Uncomment if you are specifically targeting less enabled mobile browsers
+  <link rel="stylesheet" media="handheld" href="css/handheld.css">  -->
+
+  <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+  <script src="/media/js/libs/modernizr-1.7.min.js"></script>
+
+</head>
+
+<body>
+
+  <div id="container">
+    <aside>
+        <header>
+            <nav>
+                <a href="/" id="home"><h1>XBMC Addon Browser</h1></a>
+                <p>A web-based app to browse official XBMC addons. The page is
+                static HTML auto-generated from from the official git repository
+                every hour. You can check out the code used to build the
+                site on the <a href="about/">about page</a> or jump straight to
+                the <a href="#">github repository</a>.</p>
+            </nav>
+        </header>
+
+        {% block aside_content %}
+        {% endblock %}
+
+        <footer>
+            <p>Last updated <i><time class="timeago" datetime="{{ updated_iso }}">{{ updated }}</time></i></p>
+            <p>Created by <a href="http://jonathanbeluch.com">Jonathan Beluch</a>.</p>
+        </footer>
+    </aside>
+    <div id="main" role="main">
+
+    {% block content %}
+    {% endblock %}
+
+    </div>
+  </div> <!--! end of #container -->
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if necessary -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write("<script src='/media/js/libs/jquery-1.5.2.min.js'>\x3C/script>")</script>
+
+
+  <!-- scripts concatenated and minified -->
+  <!-- scripts concatenated and minified via ant build script-->
+  <!--<script src="js/plugins.js"></script>-->
+  <!--<script src="js/script.js"></script>-->
+  <!--<script src="/media/js/jquery-1.5.1.min.js"></script>-->
+  <script src="/media/js/jquery.isotope.js"></script>
+  <script src="/media/js/jquery.timeago.js"></script>
+  <!-- end scripts -->
+  <script>
+    $(function(){
+
+
+        //hide all addon-infos since we ar eusing javascript
+        $('.addon').toggleClass('tiny');
+
+
+        $('.addon-info').hide();
+
+        var $container = $('#addons');
+        // toggle size
+        $container.find('.addon').live('click', function(){
+            // If we are enlarging the addon, send clicky an event
+            if ($(this).hasClass('tiny')) {
+                var addonId = $(this).attr('addon-id');
+                var addonName = $(this).find('.name').text();
+                clicky.log('#addon/' + addonId, addonName);
+            }
+        
+            $(this).toggleClass('tiny');
+            $(this).find('.addon-info').toggle();
+            $container.isotope('reLayout');
+        });
+
+        //hide all other language descriptison by default except for english
+        $('.description[lang!="en"]').hide();
+        $('.lang-link[desc-lang="en"]').addClass('selected');
+
+        $('.addon-info a').click(function(e) { e.stopPropagation(); });
+
+        // Language toggling functionality
+        $('.language-links a').click(function(e){
+            var $selected = $(this);
+            // If we click on the currently selected language, do nothing.
+            if ($selected.hasClass('selected')) {
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
+
+            // A new language was selected, hide the old one, show the new one
+            // and add/remove the 'selected' class appropriately.
+            // Hide all descriptions
+
+            // Save the parent div with class 'addon-info'
+            var $addonInfo = $selected.parents('.addon-info').first();
+
+            // Save the current selected language
+            var oldLanguage = $addonInfo.find('.selected').attr('desc-lang');
+            // Remove the selected class from the current language link
+            $addonInfo.find('.lang-link.selected').removeClass('selected');
+            // Fade out the currently selected language's description
+            $addonInfo.find('.description[lang="' + oldLanguage + '"]').fadeOut('400', function() {
+
+                // Add 'selected' class to clicked link
+                $selected.addClass('selected')
+                // Get the new language
+                var lang = $selected.attr('desc-lang');
+                // Fade in the newly selected language's description
+                $addonInfo.find('.description[lang="' + lang + '"]').fadeIn('401', function() {
+                    $container.isotope('reLayout');
+                });
+            });
+
+
+            //$addonInfo.find('.lang-link').removeClass('selected');
+            //$(this).addClass('selected')
+            //$addonInfo.find('.description').hide();
+
+            // Show the selected description
+            //var lang = $(this).attr('desc-lang');
+            //$addonInfo.find('.description[lang="' + lang + '"]').show();
+            
+
+
+            e.stopPropagation();
+            e.preventDefault();
+
+        });
+
+
+        
+
+        $container.isotope({
+            itemSelector: '.addon',
+            layoutMode: 'masonry',
+            masonry: {
+                columnWidth: 148 
+            },
+            getSortData: {
+                name: function ($elem) {
+                    return $elem.find('.name').text().toLowerCase();
+                },
+                type: function ($elem) {
+                    return $elem.find('.type').text();
+                },
+                lastUpdated: function ($elem) {
+                    return parseInt($elem.find('.last-updated-ts').text());
+                }
+            }
+        });
+
+
+        $('#sort a').click(function(){
+          // get href attribute, minus the '#'
+          var sortName = $(this).attr('href').slice(1);
+          var sortOrder = $(this).attr('sortAscending') == 'false' ? false : true;
+          $container.isotope({ sortBy : sortName, sortAscending: sortOrder});
+          return false;
+        });
+
+
+        // set click handlers on filters
+        $('#filter-type a').click(function(){
+          var selector = $(this).attr('data-filter');
+          //$('#container').isotope({ filter: selector });
+          $container.isotope({ filter: selector});
+          return false;
+        });
+
+        // Set filtering for languages
+        $('#filter-lang a').click(function(){
+            var lang = $(this).attr('data-filter');
+            //var selector = $(this).find('.description[lang="' + lang + '"]').parents('.addon').first();
+            //var selector = '.description[lang="' + lang + '"]:parent.addon';
+            var selector = $(this).attr('data-filter');
+
+            $container.isotope({ filter: selector });
+            return false;
+        });
+
+        $('time.timeago').timeago();
+
+    });
+
+  </script>
+
+  <!--[if lt IE 7 ]>
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script>DD_belatedPNG.fix("img, .png_bg"); // Fix any <img> or .png_bg bg-images. Also, please read goo.gl/mZiyb </script>
+  <![endif]-->
+
+
+    <script src="//static.getclicky.com/js" type="text/javascript"></script>
+    <script type="text/javascript">try{ clicky.init(66418926); }catch(e){}</script>
+    <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66418926ns.gif" /></p></noscript>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block aside_content %}
+<div id="controls">
+    {% include 'filters.html' %}
+    {% include 'sort.html' %}
+    {% include 'filter-langs.html' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="addons" class="clickable">
+<ul>
+    {% for addon in addons %}
+        {% include 'addon.html' %}
+    {% endfor %}
+
+</ul>
+</div>
+
+{% endblock %}

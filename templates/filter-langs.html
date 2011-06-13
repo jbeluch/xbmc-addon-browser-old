@@ -1,0 +1,11 @@
+<div id="filters"><h4>Languages</h4>
+    <ul id="filter-lang">
+        {% for lang, full_lang in language_pairs %}
+        <li class="filter"><a href="#" data-filter=".{{ lang }}">{{ full_lang }}</a></li>
+        {% endfor %}
+
+        <!--{% for lang in languages_in_use|sort %}-->
+        <!--<li class="filter"><a href="#" data-filter=".{{ lang }}">{{ languages[lang]|default(lang) }}</a></li>-->
+        <!--{% endfor %}-->
+    </ul>
+</div>

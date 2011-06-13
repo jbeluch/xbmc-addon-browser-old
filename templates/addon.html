@@ -1,0 +1,53 @@
+<li addon-id="{{ addon.addon_id|default('UNKNOWN') }}" class="addon {{ addon.addon_type }} {{ addon.descriptions|join(' ') }}">
+<h4 class="name">{{ addon.name|default('UNKNOWN') }}</h4>
+
+{% if addon.icon %}
+    {% if development %}
+    <div class="icon"><img class="custom-icon" src="{{ addon.icon.relative_uri }}" ></div>
+    {% else %}
+    <div class="icon"><img class="custom-icon" src="{{ addon.icon.uri }}" ></div>
+    {% endif %}
+    <!--<div class="custom-icon" id="{{ addon.addon_id|replace('.', '_') }}"></div>-->
+{% else %}
+    <div class="icon"><img class="icon" src="media/img/questionmark.jpg" ></div>
+{% endif %}
+
+<div class="addon-info">
+    {# <div class="description">{{ addon.description }}</div> #}
+
+    {% if addon.descriptions|length > 1 %}
+        <div class="language-links">
+        {% for lang in addon.descriptions %}
+            <a href="#" class="lang-link" desc-lang="{{ lang }}">{{ languages[lang]|default(lang) }}</a>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if addon.descriptions %}
+        {% for lang in addon.descriptions %}
+            <div lang="{{ lang }}" class="description">{{ addon.descriptions[lang] }}</div>
+        {% endfor %}
+    {% endif %}
+
+
+
+    <div class="detailed small">
+        <div class="id"><strong>ID:</strong> {{ addon.addon_id_html }}</div>
+        <div class="provider"><strong>Author:</strong> {{ addon.provider_html }}</div>
+
+        <div class="last-updated">
+            <strong>Last Updated:</strong> 
+            <time class="timeago" datetime="{{ addon.last_updated_iso }}"> {{ addon.last_updated_human }} </time>
+        </div>
+
+        <div style="display:none" class="last-updated-ts">{{ addon.last_updated_ts }}</div>
+        <!--<div class="version">v {{ addon['version'] }}</div>-->
+        <div style="display:none" class="type">{{ addon.addon_type }}</div>
+    </div>
+    <!--<li><span class="label">Platform: </span>{{ addon['platform'] }}</li>-->
+    <!--<li><span class="label">Summary: </span>{{ addon['summary'] }}</li>-->
+    <!--<li><span class="label">Disclaimer: </span>{{ addon['disclaimer'] }}</li>-->
+</div>
+
+
+</li>
